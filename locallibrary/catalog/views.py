@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .models import Book, Author, BookInstance, Genre
+from django.views import generic
 
 def index(request):
     """View function for home page of site."""
@@ -17,6 +18,10 @@ def index(request):
     num_genres_fiction = Genre.objects.filter(name__icontains='fiction').count()
     num_books_the = Book.objects.filter(title__icontains='the').count()
 
+    num_visits = request.session.get('num_visits', 0)
+    num_visits += 1
+    request.session['num_visits'] = num_visits
+
 
     context = {
         'num_books': num_books,
@@ -25,7 +30,22 @@ def index(request):
         'num_authors': num_authors,
         'num_genres_fiction': num_genres_fiction,
         'num_books_the': num_books_the,
+        'num_visits': num_visits,
     }
 
     # Render the HTML template index.html with the data in the context variable
     return render(request, 'index.html', context=context)
+
+class BookListView(generic.ListView):
+    model = Book
+    paginate_by = 10
+
+class BookDetailView(generic.DetailView):
+    model = Book
+
+class AuthorListView(generic.ListView):
+    model = Author
+    paginate_by = 10
+
+class AuthorDetailView(generic.DetailView):
+    model = Author
