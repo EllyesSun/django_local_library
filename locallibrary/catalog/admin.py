@@ -46,5 +46,3 @@ class BookInstanceAdmin(admin.ModelAdmin):
         }),
     )
 
-
-# personal access token: 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
